@@ -2,7 +2,7 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="场景A - 已登录用户查询（阶梯加压）" enabled="true">
-      <stringProp name="TestPlan.comments">登录一次，循环查询；用于阶梯加压找拐点。注意：users.csv 在 Once Only + shareMode=thread 下所有线程都读第一行 perf01（实际单账号）；下轮改 shareMode=group。routes.csv 在 Loop 内轮换。</stringProp>
+      <stringProp name="TestPlan.comments">登录一次，循环查询；用于阶梯加压找拐点。users.csv 用 shareMode=group，Once Only 下每个线程取不同账号；routes.csv 保持 shareMode=thread，在循环内按线程轮换 5 条线路。</stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
@@ -68,7 +68,7 @@
             <boolProp name="ignoreFirstLine">true</boolProp>
             <boolProp name="recycle">true</boolProp>
             <boolProp name="stopThread">false</boolProp>
-            <stringProp name="shareMode">shareMode.thread</stringProp>
+            <stringProp name="shareMode">shareMode.group</stringProp>
           </CSVDataSet>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="01 GET /login" enabled="true">

@@ -2,7 +2,7 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="场景C - 查询 + 下单混合" enabled="true">
-      <stringProp name="TestPlan.comments">两个独立线程组：查询用户（会话复用）与下单用户。注意：users.csv / booking.csv 在 Once Only / 单圈 + shareMode=thread 下所有线程都读第一行（实际 perf01 / 9001，单账号单座位）；下轮改 shareMode=group。</stringProp>
+      <stringProp name="TestPlan.comments">两个独立线程组：查询用户（会话复用）与下单用户。users.csv / booking.csv 用 shareMode=group，每个线程取不同账号/座位；routes.csv 保持 shareMode=thread。</stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
@@ -70,7 +70,7 @@
             <boolProp name="ignoreFirstLine">true</boolProp>
             <boolProp name="recycle">true</boolProp>
             <boolProp name="stopThread">false</boolProp>
-            <stringProp name="shareMode">shareMode.thread</stringProp>
+            <stringProp name="shareMode">shareMode.group</stringProp>
           </CSVDataSet>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询组 GET /login" enabled="true">
@@ -225,7 +225,7 @@
           <boolProp name="ignoreFirstLine">true</boolProp>
           <boolProp name="recycle">true</boolProp>
           <boolProp name="stopThread">false</boolProp>
-          <stringProp name="shareMode">shareMode.thread</stringProp>
+          <stringProp name="shareMode">shareMode.group</stringProp>
         </CSVDataSet>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="下单组 GET /login" enabled="true">

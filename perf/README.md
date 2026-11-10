@@ -7,8 +7,8 @@
 
 | 文件 | 说明 |
 |------|------|
-| `scenario-query.jmx` | 查询场景（登录一次 + 循环查询），用于阶梯加压；CSV 名义 20 用户 / 5 线路，实际登录读第一行 `perf01`、线路在循环内轮换 |
-| `scenario-mixed.jmx` | 查询 + 下单两个独立线程组（混合场景）；实际单账号 `perf01`、单座位 `9001` |
+| `scenario-query.jmx` | 查询场景（登录一次 + 循环查询），用于阶梯加压；`users.csv` 用 `shareMode=group` 按线程分流 20 个账号，`routes.csv` 循环轮换 5 条线路 |
+| `scenario-mixed.jmx` | 查询 + 下单两个独立线程组（混合场景）；`users.csv` / `booking.csv` 用 `shareMode=group` 分流账号与座位 |
 | `load-test.jmx` | 登录+查询（每次迭代重新登录，用于对比 BCrypt 代价）；**固定单账号 `alice01` + 单线路**，不是多用户场景 |
 | `booking-concurrency.jmx` | 独立并发下单（同一座位 9001，集合点） |
 | `00_perf_seed.sql` | 20 用户 / 5 线路 / 3 席别 / 充足库存 |
@@ -140,8 +140,8 @@ D:\AIBase\测试作业\tools\apache-jmeter-5.6.3\bin\jmeter.bat ^
 
 - 正式压测不要启用 View Results Tree / 聚合报告等 GUI 监听器，用 `-n` + JTL + `-e -o`
 - 参数化 CSV 都设置了 `ignoreFirstLine=true`，表头不会被当成数据
-- **CSV 共享模式的坑**：`users.csv` / `booking.csv` 用 `shareMode=thread`，但登录在 `Once Only` 里、下单组只跑 1 圈——“每线程只读一次”时所有线程都读第 1 行，实际是 `perf01` / `perf01 + 9001`，20 行数据没有分流。要分流请改 `shareMode=group` 或按线程号预分配
+- **CSV 共享模式**：`users.csv` / `booking.csv` 已改 `shareMode=group`，登录在 `Once Only`、下单组单圈时，每个线程取下一行，20 行数据会分流（10 线程 = `perf01`–`perf10` / 不同座位）。历史结果为修复前单账号口径
 - 查询场景只读；混合/下单场景每轮前执行 `01_perf_reset.sql`
 - 压测机与应用同机时，JMeter 自身也会占 CPU，结果偏保守；本轮没有单独采客户端 CPU，无法排除客户端限制
-- 数据规模名义 20 账号 / 5 线路 / 15 座位，实际单账号；全部可缓存，容量结论偏乐观
+- 数据规模 20 账号 / 5 线路 / 15 座位；历史容量数字是单账号口径，CSV 修复后需重跑才能得到多账号容量
 - 写路径只做了 10 单链路验证；JUnit 超卖测试在 H2 上，不覆盖 MySQL 行锁
