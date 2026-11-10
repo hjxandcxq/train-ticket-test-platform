@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0a6fb0">
+    <meta name="description" content="火车票预订系统登录 — 晴空列车">
+    <title>登录 — 火车票预订系统</title>
+    <link rel="preload" as="image" th:href="@{/login/assets/landscape.webp}">
+    <link rel="preload" as="image" th:href="@{/login/assets/train-full.webp}">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body class="login-page">
+<main class="journey" id="journey" aria-label="晴空列车登录">
+    <div class="artboard" aria-hidden="true">
+        <img class="scene-layer landscape" th:src="@{/login/assets/landscape.webp}"
+             alt="" draggable="false" fetchpriority="high">
+        <img class="scene-layer cloud cloud-main" th:src="@{/login/assets/cloud-main.webp}"
+             alt="" draggable="false">
+        <img class="scene-layer cloud cloud-left" th:src="@{/login/assets/cloud-left.webp}"
+             alt="" draggable="false">
+        <img class="scene-layer cloud cloud-right" th:src="@{/login/assets/cloud-right.webp}"
+             alt="" draggable="false">
+        <div class="train-wrap">
+            <img class="scene-layer train" id="train" th:src="@{/login/assets/train-full.webp}"
+                 alt="" draggable="false">
+        </div>
+    </div>
+
+    <section class="login-stage">
+        <div class="login-card">
+            <p class="login-kicker">晴空列车 · A slower kind of journey</p>
+            <h1>火车票预订系统</h1>
+            <p class="login-sub">登录后查询车次、下单与退票</p>
+
+            <div class="msg error" role="alert" th:if="${error}" th:text="${error}">错误提示</div>
+            <div class="msg success" role="status" th:if="${success}" th:text="${success}">成功提示</div>
+
+            <form class="login-form" th:action="@{/login}" method="post">
+                <div class="field">
+                    <label for="uname">用户名</label>
+                    <input type="text" id="uname" name="uname" th:value="${uname}"
+                           placeholder="请输入用户名" autocomplete="username">
+                </div>
+                <div class="field">
+                    <label for="pword">密码</label>
+                    <input type="password" id="pword" name="pword"
+                           placeholder="请输入密码" autocomplete="current-password">
+                </div>
+                <button type="submit" id="btn-login">登录</button>
+            </form>
+
+            <p class="login-links">还没有账号？<a th:href="@{/register}">立即注册</a></p>
+
+            <div class="demo-accounts">
+                <p>演示账号</p>
+                <ul>
+                    <li>普通用户：alice01 / Pass123</li>
+                    <li>管理员：admin / admin123</li>
+                </ul>
+            </div>
+
+            <p class="login-foot">Java Web 性能测试被测系统</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#087fc5">
+  <meta name="description" content="一列驶向夏天的列车，一片缓慢漂浮的云。">
+  <title>晴空列车 · A slower kind of journey</title>
+  <link rel="preload" href="./assets/landscape.webp" as="image">
+  <link rel="preload" href="./assets/train-full.webp" as="image">
+  <style>
+    :root {
+      --sky-deep: oklch(0.61 0.17 241);
+      --ink: oklch(0.25 0.055 240);
+      --paper: oklch(0.98 0.025 105);
+      --glass: oklch(0.98 0.025 105 / 0.88);
+      --train-speed: 28s;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; overflow: hidden; }
+    body {
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--paper);
+      background: #087fc5;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    button:focus-visible { outline: 3px solid oklch(0.94 0.15 105); outline-offset: 4px; }
+    .journey {
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      min-height: 480px;
+      isolation: isolate;
+      overflow: hidden;
+    }
+    .artboard {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 50%;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .landscape { z-index: 0; }
+    .cloud { will-change: transform; }
+    .cloud-main { z-index: 1; animation: drift-main 32s ease-in-out infinite alternate; }
+    .cloud-left { z-index: 2; animation: drift-left 24s ease-in-out infinite alternate; }
+    .cloud-right { z-index: 2; animation: drift-right 38s ease-in-out infinite alternate; }
+    .train-wrap {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    .train {
+      will-change: transform;
+      animation: travel var(--train-speed) linear infinite;
+      animation-delay: -10.5s;
+    }
+    /* On portrait screens the illustration remains full-bleed, with the train readable at phone scale. */
+    @media (max-aspect-ratio: 4/3) {
+      .artboard { left: 50%; right: auto; width: max(100vw, 133.33dvh); transform: translateX(-50%); }
+      .layer { object-fit: fill; }
+    }
+    @keyframes travel {
+      from { transform: translate3d(-85%, 0, 0); }
+      to { transform: translate3d(110%, 0, 0); }
+    }
+    @keyframes drift-main {
+      from { transform: translate3d(-1.4%, 0, 0) scale(1.025); }
+      to { transform: translate3d(1.8%, 0, 0) scale(1.025); }
+    }
+    @keyframes drift-left {
+      from { transform: translate3d(-2%, 0, 0) scale(1.035); }
+      to { transform: translate3d(1%, 0, 0) scale(1.035); }
+    }
+    @keyframes drift-right {
+      from { transform: translate3d(1.6%, 0, 0) scale(1.035); }
+      to { transform: translate3d(-1.8%, 0, 0) scale(1.035); }
+    }
+    .paused .cloud, .paused .train { animation-play-state: paused; }
+    .bottom {
+      position: absolute;
+      z-index: 5;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 0 calc(28px + env(safe-area-inset-right)) calc(26px + env(safe-area-inset-bottom)) calc(28px + env(safe-area-inset-left));
+      color: var(--ink);
+    }
+    .controls { display: flex; align-items: center; gap: 8px; flex: none; }
+    .control {
+      min-width: 48px;
+      height: 48px;
+      border: 1px solid oklch(0.3 0.06 240 / .12);
+      border-radius: 50%;
+      background: var(--glass);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px oklch(0.3 0.07 240 / .08);
+      backdrop-filter: blur(10px);
+      transition: transform 180ms ease-out, background-color 180ms ease-out;
+    }
+    .control:hover { background: var(--paper); transform: translateY(-2px); }
+    .control:active { transform: translateY(0) scale(.96); }
+    .control svg { width: 18px; height: 18px; }
+    .speed { min-width: 48px; }
+    .speed svg { width: 21px; height: 21px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 600px) {
+      .bottom { padding-left: calc(18px + env(safe-area-inset-left)); padding-right: calc(18px + env(safe-area-inset-right)); padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+      .control { width: 48px; height: 48px; min-width: 48px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cloud, .train { animation-play-state: paused; }
+      .control { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="journey" id="journey" aria-label="晴空下的列车动态风景">
+    <div class="artboard" aria-hidden="true">
+      <img class="layer landscape" src="./assets/landscape.webp" alt="" draggable="false">
+      <img class="layer cloud cloud-main" src="./assets/cloud-main.webp" alt="" draggable="false">
+      <img class="layer cloud cloud-left" src="./assets/cloud-left.webp" alt="" draggable="false">
+      <img class="layer cloud cloud-right" src="./assets/cloud-right.webp" alt="" draggable="false">
+      <div class="train-wrap">
+        <img class="layer train" id="train" src="./assets/train-full.webp" alt="" draggable="false">
+      </div>
+    </div>
+
+    <section class="bottom" aria-label="画面控制">
+      <div class="controls" aria-label="动画控制">
+        <button class="control speed" id="speed" type="button" aria-label="当前一倍速，点击切换速度">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 17a8 8 0 1 1 16 0"/>
+            <path id="speed-needle" d="M12 17 16 10" transform="rotate(-42 12 17)"/>
+            <circle cx="12" cy="17" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button class="control" id="toggle" type="button" aria-label="暂停动画" aria-pressed="false">
+          <svg id="pause-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:none"><path d="M7 4.8v14.4c0 .8.9 1.3 1.6.8l11-7.2a1 1 0 0 0 0-1.6l-11-7.2A1 1 0 0 0 7 4.8Z"/></svg>
+        </button>
+      </div>
+    </section>
+    <p class="sr-only" id="announcer" aria-live="polite"></p>
+  </main>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>我的订单 — 火车票预订系统</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+
+<main class="container">
+    <section class="card">
+        <h2>我的订单</h2>
+        <div class="msg success" th:if="${success}" th:text="${success}">成功提示</div>
+        <div class="msg error" th:if="${error}" th:text="${error}">错误提示</div>
+
+        <p class="empty" th:if="${#lists.isEmpty(orders)}">
+            还没有订单，去<a th:href="@{/trains}">查询车次</a>买一张票吧。
+        </p>
+
+        <table class="data-table" id="orderTable" th:unless="${#lists.isEmpty(orders)}">
+            <thead>
+            <tr>
+                <th>订单号</th>
+                <th>车次</th>
+                <th>行程</th>
+                <th>出行</th>
+                <th>席别</th>
+                <th>乘客</th>
+                <th>金额</th>
+                <th>状态</th>
+                <th>下单时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="o : ${orders}">
+                <td th:text="${o.orderNo}">T2026...</td>
+                <td th:text="${o.trainNo}">G101</td>
+                <td th:text="${o.route}">北京南 → 上海虹桥</td>
+                <td th:text="${o.travelDate + ' ' + o.departTime}">2026-10-27 08:00</td>
+                <td th:text="${o.seatType}">二等座</td>
+                <td th:text="${o.passengerName}">张三</td>
+                <td th:text="${'¥' + o.amount}">¥553.00</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${o.status == 'PAID' ? 'paid' : 'refunded'}"
+                          th:text="${o.status == 'PAID' ? '已支付' : '已退票'}">已支付</span>
+                </td>
+                <td th:text="${o.createdAt}">2026-10-20 10:00:00</td>
+                <td>
+                    <form th:if="${o.status == 'PAID'}" method="post"
+                          th:action="@{'/orders/' + ${o.id} + '/refund'}">
+                        <button type="submit" class="danger">退票</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

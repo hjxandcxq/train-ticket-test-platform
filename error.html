@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>出错了 — 火车票预订系统</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="auth-page">
+<div class="auth-card">
+    <h1>页面出错了</h1>
+    <p class="subtitle" th:text="${status != null ? 'HTTP ' + status : '请求处理失败'}">HTTP 500</p>
+    <p class="empty">请返回<a th:href="@{/trains}">车次查询</a>重试。</p>
+</div>
+</body>
+</html>

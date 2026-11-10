@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 30m
+
+spring:
+  application:
+    name: train-ticket
+  datasource:
+    # 默认连本机 MySQL；账号密码从环境变量读取，不要把真实密码写进仓库
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/train_ticket?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:train_app}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      # 表结构由 db/01_schema.sql 创建，应用启动时只校验，不自动改表
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+  thymeleaf:
+    cache: false
+
+app:
+  # 仅 h2 演示 profile 会打开演示数据初始化
+  seed-demo: false

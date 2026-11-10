@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>车次查询 — 火车票预订系统</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+
+<main class="container">
+    <section class="card">
+        <h2>车次查询</h2>
+        <div class="msg error" th:if="${error}" th:text="${error}">错误提示</div>
+
+        <form class="search-form" method="post" action="/trains/search">
+            <div class="field">
+                <label for="fromStation">出发站</label>
+                <select id="fromStation" name="fromStation">
+                    <option value="">请选择</option>
+                    <option th:each="s : ${fromStations}" th:value="${s}" th:text="${s}"
+                            th:selected="${s == fromStation}"></option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="toStation">到达站</label>
+                <select id="toStation" name="toStation">
+                    <option value="">请选择</option>
+                    <option th:each="s : ${toStations}" th:value="${s}" th:text="${s}"
+                            th:selected="${s == toStation}"></option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="travelDate">出行日期</label>
+                <input type="date" id="travelDate" name="travelDate"
+                       th:value="${travelDate != null ? travelDate : defaultDate}"
+                       th:min="${today}">
+            </div>
+            <button type="submit" id="btn-search">查询车次</button>
+        </form>
+    </section>
+
+    <section class="card" th:if="${searched}">
+        <h2>查询结果</h2>
+        <p class="empty" th:if="${#lists.isEmpty(results)}">没有查询到符合条件的车次，请更换站点或日期。</p>
+
+        <table class="data-table" id="trainTable" th:unless="${#lists.isEmpty(results)}">
+            <thead>
+            <tr>
+                <th>车次</th>
+                <th>行程</th>
+                <th>时间</th>
+                <th>历时</th>
+                <th>席别</th>
+                <th>票价</th>
+                <th>余票</th>
+                <th>预订</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${results}">
+                <td th:text="${r.trainNo}">G101</td>
+                <td th:text="${r.fromStation + ' → ' + r.toStation}">北京南 → 上海虹桥</td>
+                <td th:text="${r.departTime + ' - ' + r.arriveTime}">08:00 - 12:30</td>
+                <td th:text="${r.duration}">4小时30分</td>
+                <td th:text="${r.seatType}">二等座</td>
+                <td th:text="${'¥' + r.price}">¥553.00</td>
+                <td>
+                    <span th:text="${r.stock}">100</span>
+                    <span class="tag sold-out" th:if="${r.stock <= 0}">无票</span>
+                </td>
+                <td>
+                    <form class="inline-form" method="post" action="/orders">
+                        <input type="hidden" name="seatId" th:value="${r.seatId}">
+                        <input type="text" name="passengerName" placeholder="乘客姓名" maxlength="50"
+                               required th:disabled="${r.stock <= 0}">
+                        <button type="submit" th:disabled="${r.stock <= 0}">预订</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

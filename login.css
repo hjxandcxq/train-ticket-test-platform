@@ -1,0 +1,410 @@
+:root {
+    --card-alpha: 0.88;
+    --ink: #12324f;
+    --ink-strong: #0b2740;
+    --muted: #526b82;
+    --brand: #0a6fb0;
+    --brand-deep: #064c7e;
+    --danger: #b23a2f;
+    --success: #1f7a4d;
+    --line: rgba(18, 50, 79, 0.14);
+    --train-speed: 28s;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body.login-page {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
+    background: #0a6fb0;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: var(--brand);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- 场景 ---------- */
+
+.journey {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 520px;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.artboard {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.scene-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 50%;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.landscape {
+    z-index: 0;
+}
+
+.cloud {
+    will-change: transform;
+}
+
+.cloud-main {
+    z-index: 1;
+    animation: drift-main 32s ease-in-out infinite alternate;
+}
+
+.cloud-left {
+    z-index: 2;
+    animation: drift-left 24s ease-in-out infinite alternate;
+}
+
+.cloud-right {
+    z-index: 2;
+    animation: drift-right 38s ease-in-out infinite alternate;
+}
+
+.train-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+}
+
+.train {
+    will-change: transform;
+    animation: travel var(--train-speed) linear infinite;
+    animation-delay: -10.5s;
+}
+
+@keyframes travel {
+    from { transform: translate3d(-85%, 0, 0); }
+    to { transform: translate3d(110%, 0, 0); }
+}
+
+@keyframes drift-main {
+    from { transform: translate3d(-1.4%, 0, 0) scale(1.025); }
+    to { transform: translate3d(1.8%, 0, 0) scale(1.025); }
+}
+
+@keyframes drift-left {
+    from { transform: translate3d(-2%, 0, 0) scale(1.035); }
+    to { transform: translate3d(1%, 0, 0) scale(1.035); }
+}
+
+@keyframes drift-right {
+    from { transform: translate3d(1.6%, 0, 0) scale(1.035); }
+    to { transform: translate3d(-1.8%, 0, 0) scale(1.035); }
+}
+
+/* 竖屏时保持 4:3 画幅，避免列车被过度裁切 */
+@media (max-aspect-ratio: 4/3) {
+    .artboard {
+        left: 50%;
+        right: auto;
+        width: max(100vw, 133.33dvh);
+        transform: translateX(-50%);
+    }
+
+    .scene-layer {
+        object-fit: fill;
+    }
+}
+
+/* ---------- 登录卡片 ---------- */
+
+.login-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: clamp(18px, 4vw, 56px) clamp(18px, 6vw, 88px);
+}
+
+.login-card {
+    width: min(420px, 100%);
+    max-height: calc(100dvh - 72px);
+    overflow-y: auto;
+    padding: 34px 34px 26px;
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    border-radius: 26px;
+    background-color: rgba(255, 255, 255, var(--card-alpha));
+    background-image: linear-gradient(155deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 42%, rgba(120, 180, 230, 0.10));
+    box-shadow: 0 30px 80px rgba(4, 38, 70, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(18px) saturate(125%);
+    -webkit-backdrop-filter: blur(18px) saturate(125%);
+    color: var(--ink);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(18, 50, 79, 0.25) transparent;
+}
+
+.login-card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.login-card::-webkit-scrollbar-thumb {
+    background: rgba(18, 50, 79, 0.22);
+    border-radius: 8px;
+}
+
+.login-kicker {
+    margin: 0 0 10px;
+    color: var(--brand-deep);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.login-card h1 {
+    margin: 0;
+    color: var(--ink-strong);
+    font-size: 26px;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+}
+
+.login-sub {
+    margin: 8px 0 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.msg {
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.msg.error {
+    border-color: rgba(178, 58, 47, 0.26);
+    background: rgba(178, 58, 47, 0.10);
+    color: #8e2a21;
+}
+
+.msg.success {
+    border-color: rgba(31, 122, 77, 0.24);
+    background: rgba(31, 122, 77, 0.10);
+    color: #17603c;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.field input {
+    width: 100%;
+    height: 44px;
+    padding: 0 13px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.68);
+    color: var(--ink-strong);
+    transition: border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out;
+}
+
+.field input::placeholder {
+    color: #8a9bad;
+}
+
+.field input:focus {
+    border-color: rgba(10, 111, 176, 0.65);
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 0 0 4px rgba(10, 111, 176, 0.12);
+}
+
+#btn-login {
+    height: 46px;
+    margin-top: 4px;
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #0b5c96, #0a86c9);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    box-shadow: 0 12px 24px rgba(6, 76, 126, 0.28);
+    transition: transform 160ms ease-out, box-shadow 160ms ease-out, filter 160ms ease-out;
+}
+
+#btn-login:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 28px rgba(6, 76, 126, 0.34);
+    filter: brightness(1.04);
+}
+
+#btn-login:active {
+    transform: translateY(0) scale(0.99);
+}
+
+#btn-login:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.85);
+    outline-offset: 3px;
+}
+
+.login-links {
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.demo-accounts {
+    margin-top: 20px;
+    padding: 12px 14px;
+    border: 1px dashed rgba(18, 50, 79, 0.20);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.38);
+}
+
+.demo-accounts p {
+    margin: 0 0 6px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.demo-accounts ul {
+    margin: 0;
+    padding-left: 16px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.login-foot {
+    margin: 18px 0 0;
+    color: rgba(18, 50, 79, 0.55);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-align: center;
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 900px) {
+    .login-stage {
+        justify-content: center;
+        padding: 18px;
+    }
+
+    .login-card {
+        width: min(420px, 100%);
+    }
+}
+
+@media (max-width: 600px) {
+    .login-card {
+        padding: 26px 22px 22px;
+        border-radius: 22px;
+    }
+
+    .login-card h1 {
+        font-size: 23px;
+    }
+
+    .login-sub {
+        margin-bottom: 16px;
+    }
+
+    .demo-accounts {
+        margin-top: 14px;
+    }
+}
+
+@media (max-height: 700px) {
+    .login-card {
+        max-height: calc(100dvh - 48px);
+        padding-top: 24px;
+        padding-bottom: 20px;
+    }
+
+    .demo-accounts {
+        display: none;
+    }
+
+    .login-foot {
+        margin-top: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cloud,
+    .train {
+        animation-play-state: paused;
+    }
+
+    #btn-login,
+    .field input {
+        transition: none;
+    }
+}
+
+/* 不支持 backdrop-filter 时提高卡片不透明度，保证可读性 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .login-card {
+        background-color: rgba(255, 255, 255, calc(var(--card-alpha) + 0.12));
+    }
+}

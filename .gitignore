@@ -1,0 +1,38 @@
+target/
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+.DS_Store
+Thumbs.db
+
+__pycache__/
+*.py[cod]
+.venv/
+
+# 运行日志与压测产物
+logs/
+*.log
+perf/results/
+*.jtl
+
+# 功能自动化
+.venv-tests/
+functional_tests/screenshots/
+.pytest_cache/
+
+# 本地数据库/环境配置（不要提交真实密码）
+.env
+.env.*
+functional_tests/.env
+functional_tests/.env.*
+
+# IDE 运行配置 / 个人操作文档 / 生成器（含本机数据库密码）
+.run/
+数据库操作.docx
+docs/数据库操作.docx
+scripts/gen_db_doc.py
+perf/temp/
+docs/~$*

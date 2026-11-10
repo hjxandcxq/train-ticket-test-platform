@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理后台 — 火车票预订系统</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: nav}"></header>
+
+<main class="container">
+    <div class="msg success" th:if="${success}" th:text="${success}">成功提示</div>
+    <div class="msg error" th:if="${error}" th:text="${error}">错误提示</div>
+
+    <section class="stats">
+        <div class="stat">
+            <span>用户数</span>
+            <strong th:text="${stats.users}">0</strong>
+        </div>
+        <div class="stat">
+            <span>车次线路</span>
+            <strong th:text="${stats.trains}">0</strong>
+        </div>
+        <div class="stat">
+            <span>订单数</span>
+            <strong th:text="${stats.orders}">0</strong>
+        </div>
+        <div class="stat">
+            <span>已支付订单</span>
+            <strong th:text="${stats.paidOrders}">0</strong>
+        </div>
+        <div class="stat">
+            <span>已支付金额</span>
+            <strong th:text="${'¥' + stats.revenue}">¥0</strong>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>新增车次</h2>
+        <form class="admin-form" method="post" action="/admin/trains">
+            <div class="field">
+                <label for="trainNo">车次号</label>
+                <input type="text" id="trainNo" name="trainNo" placeholder="如 G105">
+            </div>
+            <div class="field">
+                <label for="fromStation">出发站</label>
+                <input type="text" id="fromStation" name="fromStation" placeholder="如 北京南">
+            </div>
+            <div class="field">
+                <label for="toStation">到达站</label>
+                <input type="text" id="toStation" name="toStation" placeholder="如 上海虹桥">
+            </div>
+            <div class="field">
+                <label for="departTime">出发时间</label>
+                <input type="time" id="departTime" name="departTime" value="08:00">
+            </div>
+            <div class="field">
+                <label for="arriveTime">到达时间</label>
+                <input type="time" id="arriveTime" name="arriveTime" value="12:30">
+            </div>
+            <div class="field">
+                <label for="basePrice">二等座票价</label>
+                <input type="text" id="basePrice" name="basePrice" placeholder="如 553.00">
+            </div>
+            <button type="submit" id="btn-add-train">添加车次</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>车次列表</h2>
+        <table class="data-table" id="adminTrainTable">
+            <thead>
+            <tr>
+                <th>车次</th>
+                <th>行程</th>
+                <th>时间</th>
+                <th>历时</th>
+                <th>二等座基准价</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${trains}">
+                <td th:text="${t.trainNo}">G101</td>
+                <td th:text="${t.fromStation + ' → ' + t.toStation}">北京南 → 上海虹桥</td>
+                <td th:text="${t.departTime.toString() + ' - ' + t.arriveTime.toString()}">
+                    08:00 - 12:30
+                </td>
+                <td th:text="${t.durationMinutes + ' 分钟'}">270 分钟</td>
+                <td th:text="${'¥' + t.basePrice}">¥553.00</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>最近订单</h2>
+        <p class="empty" th:if="${#lists.isEmpty(recentOrders)}">暂无订单。</p>
+        <table class="data-table" th:unless="${#lists.isEmpty(recentOrders)}">
+            <thead>
+            <tr>
+                <th>订单号</th>
+                <th>车次</th>
+                <th>乘客</th>
+                <th>金额</th>
+                <th>状态</th>
+                <th>下单时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="o : ${recentOrders}">
+                <td th:text="${o.orderNo}">T2026...</td>
+                <td th:text="${o.trainNo + ' ' + o.route}">G101 北京南 → 上海虹桥</td>
+                <td th:text="${o.passengerName}">张三</td>
+                <td th:text="${'¥' + o.amount}">¥553.00</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${o.status == 'PAID' ? 'paid' : 'refunded'}"
+                          th:text="${o.status == 'PAID' ? '已支付' : '已退票'}">已支付</span>
+                </td>
+                <td th:text="${o.createdAt}">2026-10-20 10:00:00</td>
+                <td>
+                    <form th:if="${o.status == 'PAID'}" method="post"
+                          th:action="@{'/admin/orders/' + ${o.id} + '/refund'}">
+                        <button type="submit" class="danger">退票</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

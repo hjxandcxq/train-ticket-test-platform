@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="nav" th:fragment="nav">
+    <div class="brand"><a th:href="@{/trains}">火车票预订系统</a></div>
+    <nav class="nav-links">
+        <a th:href="@{/trains}">车次查询</a>
+        <a th:href="@{/orders}">我的订单</a>
+        <a th:if="${role == 'ADMIN'}" th:href="@{/admin}">管理后台</a>
+        <span class="user" th:text="${username}">用户</span>
+        <a th:href="@{/logout}">退出</a>
+    </nav>
+</header>
+</body>
+</html>
