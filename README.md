@@ -1,4 +1,4 @@
-# 火车票预订系统 · 性能与自动化测试实践
+# 火车票预订系统 · 压力测试与性能剖析实践
 
 ### Spring Boot + MySQL 被测系统 · JMeter + JProfiler 性能测试 · JUnit + Selenium 自动化
 
@@ -22,7 +22,7 @@
 
 ## 项目简介
 
-一个完整的测试工程通常有三块拼图，这个项目把它们放进同一个仓库：
+一个完整的测试工程通常由几块拼图组成，这个项目把它们放进同一个仓库：
 
 | 角色 | 是什么 | 在哪 |
 |------|--------|------|
@@ -35,7 +35,7 @@
 
 核心特点是**数据可追溯**：TPS、P95、CPU、错误率都能在 `perf/results/` 的
 汇总 CSV / JTL / 采样文件里找到，CPU 热点能在 `docs/profiler/` 的快照与导出文件里复核；
-脚本可以重新生成图表和 Word 报告。
+脚本可以重新生成图表和证据文件。
 
 ## 架构
 
@@ -61,7 +61,7 @@ flowchart LR
 1. `perf/00_perf_seed.sql` 初始化压测用户、线路、座位；`01_perf_reset.sql` 每轮复位
 2. JMeter 用 `-n` 命令行执行场景，产出 JTL
 3. `perf/analyze_*.py` 从 JTL/资源 CSV 计算 TPS、P90/P95/P99、错误率、CPU
-4. `perf/plot_step_load.py` 等生成图表，`scripts/gen_perf_report_docx.py` 生成 Word 报告
+4. `perf/plot_step_load.py` 等生成图表；`scripts/gen_perf_report_docx.py` 可在本地重新生成 Word 报告
 
 ## 目录结构
 
@@ -322,11 +322,11 @@ GUI 的 Attach 流程、采样时长和截图点见
 |------|------|
 | 真实业务约束，不是 CRUD demo | 下单用 `UPDATE ... WHERE stock > 0` 原子扣减；JUnit 50 抢 10 不超卖 |
 | 测试链路完整 | JMeter 4 个场景 + JProfiler CPU 采样 + 25 条 Selenium + 2 条 JUnit + 图表/证据 |
-| 每个数字可追溯 | JTL/CSV → 图表 → 报告；JProfiler 快照 → 调用树 → 热点 CSV；`perf/analyze_*.py` 可重算 |
+| 每个数字可追溯 | JTL/CSV → 图表 → 证据；JProfiler 快照 → 调用树 → 热点 CSV；`perf/analyze_*.py` 可重算 |
 | 有实验精神 | 连接池 A/B 主动推翻“10 连接上限”的初始假设，并保留否定结论 |
 | AI 辅助 + 人工复核 | AI 生成/修改 JMX、分析、图表和报告初稿；所有数字回原始 JTL 复核 |
 | 可教学、可复现 | 中文文档、seed/reset SQL、H2 演示、脚本化命令 |
-| 展示效果 | 动态登录页、可配置卡片透明度、JMeter HTML 报告、JFR 火焰图 |
+| 展示效果 | 动态登录页、可配置卡片透明度、JMeter HTML 报告、JProfiler 快照/Hot Spots、JFR 火焰图 |
 
 ## 图片展示
 
@@ -342,7 +342,7 @@ JMeter 原生 HTML 报告（100 线程档）：
 
 ![阶梯 TPS](docs/figs/step-load-tps.png)
 
-JFR CPU 火焰图（BCrypt 占 89.4%）：
+JFR CPU 火焰图（BCrypt 占 89.4%，与 JProfiler 的 91.2% 相互印证）：
 
 ![CPU 火焰图](docs/figs/cpu-flamegraph-jfr.png)
 

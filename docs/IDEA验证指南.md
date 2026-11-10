@@ -344,7 +344,7 @@ cd D:\AIBase\测试作业\train-ticket-java
 | 登录+查询 | 主请求 TPS≈147.6、事务≈49.2/s、P95≈1024ms（未达标） |
 | 资源 | 应用 CPU 峰值≈43%、MySQL CPU 峰值≈28%、慢查询 0（阈值 10s） |
 | 连接池 A/B | pool30 稳态 1573/1591 TPS，较 pool10 +6%，连接池不是主限制器 |
-| Profiler | JFR 火焰图 `BCrypt.encipher` 占比约 89%；IDEA Profiler 截图可选 |
+| Profiler | JProfiler 16.3 CPU 热点 `BCryptPasswordEncoder.matches` 91.2%；JFR 火焰图 `BCrypt.encipher` 约 89%；IDEA Profiler 截图可选 |
 
 ## 10. 注意事项
 

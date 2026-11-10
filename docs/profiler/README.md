@@ -1,6 +1,6 @@
 # JProfiler 采样证据（2026-11-03）
 
-登录场景的 JProfiler 16.3 **CPU sampling（5 ms）** 结果，与报告中作为主证据的 JFR
+登录场景的 JProfiler 16.3 **CPU sampling（5 ms）** 结果，与 README 中作为主证据的 JFR
 （`docs/figs/cpu-flamegraph-jfr.png`，BCrypt 89.4%）相互印证。
 
 | 文件 | 内容 |

@@ -2,6 +2,9 @@
 
 目标：在 100 线程压测期间定位 CPU 热点和内存分配，补充到《性能测试报告》。
 
+> 本文用的是 **IDEA 自带 Profiler**。JProfiler 16.3 的采样与证据见
+> `docs/profiler/README.md` 和 `docs/JMeter与JProfiler操作手册.md`。
+
 ## 1. 启动应用（必须是 MySQL 模式）
 
 IDEA 右上角运行配置选择 **TrainTicketApplication (MySQL)**，点 Run，确认 8080 正常打开：
