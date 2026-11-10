@@ -39,7 +39,7 @@
 
 ## 架构
 
-![系统架构](docs/figs/architecture.jpg)
+![系统架构](docs/figs/architecture.png)
 
 一次性能测试的链路：
 
