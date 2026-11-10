@@ -1,0 +1,5 @@
+selenium>=4.20
+pytest>=8.0
+pytest-html>=4.0
+requests>=2.31
+PyMySQL>=1.1

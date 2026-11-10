@@ -1,0 +1,18 @@
+JFR 采样时长: 35s，ExecutionSample: 1646 个
+CPU（跳过启动前 2 个点）: jvmUser 平均 23.5% / 峰值 40.6%；机器总 CPU 平均 59.9% / 峰值 77.2%
+
+CPU 热点（栈顶帧）:
+   1472   89.4%  org.springframework.security.crypto.bcrypt.BCrypt.encipher
+     57    3.5%  org.springframework.security.crypto.bcrypt.BCrypt.key
+     14    0.9%  org.springframework.security.crypto.bcrypt.BCrypt.streamtowords
+      2    0.1%  org.thymeleaf.web.servlet.JakartaServletWebExchange.getAttributeValue
+      2    0.1%  org.attoparser.HtmlElements$HtmlElementRepository.binarySearch
+      2    0.1%  org.springframework.security.crypto.bcrypt.BCrypt.streamtoword
+      2    0.1%  java.util.Objects.checkIndex
+      2    0.1%  java.lang.StringBuilder.<init>
+
+包含关键方法的样本数:
+    375   22.8%  Thymeleaf
+   1546   93.9%  BCryptPasswordEncoder.matches
+
+压测后堆: garbage-first heap used 48305K / total 184320K；Metaspace used 78524K

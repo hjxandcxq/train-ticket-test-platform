@@ -1,0 +1,15 @@
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Variable_name	Value
+slow_query_log	ON
+Variable_name	Value
+long_query_time	10.000000
+Variable_name	Value
+Slow_queries	0
+Variable_name	Value
+Questions	4332998
+Variable_name	Value
+Threads_connected	11
+Variable_name	Value
+Innodb_row_lock_waits	28
+Variable_name	Value
+Innodb_row_lock_time_avg	52
