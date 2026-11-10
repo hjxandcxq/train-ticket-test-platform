@@ -1,19 +1,20 @@
 # 火车票预订系统 · 性能与自动化测试实践
 
-### Spring Boot + MySQL + JMeter + JUnit + Selenium 的一体化测试项目
+### Spring Boot + MySQL 被测系统 · JMeter + JProfiler 性能测试 · JUnit + Selenium 自动化
 
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.4-6DB33F)
 ![MySQL](https://img.shields.io/badge/MySQL-8.4-4479A1)
 ![JMeter](https://img.shields.io/badge/JMeter-5.6.3-D22128)
-![Selenium](https://img.shields.io/badge/Selenium-25%20passed-43B02A)
+![JProfiler](https://img.shields.io/badge/JProfiler-16.3-1F6FEB)
 ![JUnit](https://img.shields.io/badge/JUnit-50%20concurrent-25A162)
+![Selenium](https://img.shields.io/badge/Selenium-25%20passed-43B02A)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 一个**可复现**的火车票系统测试项目：自己造一套 Spring Boot + MySQL 被测系统，
-用 JMeter 完成查询阶梯、混合查询+下单、登录对比和并发下单；用 JUnit 验证 50 并发抢 10 张票不超卖；
-用 25 条 pytest + Selenium 覆盖登录/注册/查询/下单/退票/后台；所有性能数字都能回到 JTL/CSV，
-并保留可复现的图表与证据链。
+用 JMeter 完成查询阶梯、混合查询+下单、登录对比和并发下单，用 JProfiler 采样定位 CPU 热点；
+用 JUnit 验证 50 并发抢 10 张票不超卖；用 25 条 pytest + Selenium 覆盖登录/注册/查询/下单/退票/后台。
+所有性能数字都能回到 JTL/CSV，并保留可复现的图表与证据链。
 
 `快速开始` · `性能结果` · `数据库安装` · `测试设计` · `项目亮点` · `文档索引`
 
@@ -26,14 +27,15 @@
 | 角色 | 是什么 | 在哪 |
 |------|--------|------|
 | 被测系统 | 火车票预订系统：登录 / 车次查询 / 下单 / 退票 / 管理后台 | `src/`、`db/` |
-| 性能测试 | 4 个 JMeter 场景 + 种子/复位 SQL + JTL/HTML + 分析脚本 | `perf/` |
+| 性能测试 | 4 个 JMeter 场景 + **JProfiler 16.3 CPU 采样** + 种子/复位 SQL + JTL/HTML + 分析脚本 | `perf/`、`docs/profiler/` |
 | 功能自动化 | 25 条 pytest + Selenium 用例，覆盖成功与失败场景 | `functional_tests/` |
 | 并发正确性 | JUnit 50 并发抢 10 张票；JMeter 同座位集合点下单 | `src/test/`、`perf/booking-concurrency.jmx` |
-| 测试报告 | 方案、报告、图表、证据链 | `docs/` |
+| 测试文档 | 方案、证据链、JMeter + JProfiler 操作手册 | `docs/` |
 | 登录页 | 晴空列车动态场景，卡片透明度可配置（CSS 变量） | `app/`、`src/main/resources/static/login/` |
 
-核心特点是**数据可追溯**：报告里的 TPS、P95、CPU、错误率都能在 `perf/results/` 的
-汇总 CSV / JTL / 采样文件里找到；脚本可以重新生成图表和 Word 报告。
+核心特点是**数据可追溯**：TPS、P95、CPU、错误率都能在 `perf/results/` 的
+汇总 CSV / JTL / 采样文件里找到，CPU 热点能在 `docs/profiler/` 的快照与导出文件里复核；
+脚本可以重新生成图表和 Word 报告。
 
 ## 架构
 
@@ -44,6 +46,8 @@ flowchart LR
     JPA --> H[HikariCP]
     H --> DB[(MySQL 8.4)]
     JM[JMeter 5.6<br/>CLI -n] -->|login / search / order| S
+    JP[JProfiler 16.3<br/>CPU sampling 5 ms] -.->|采样| S
+    JP --> P[快照 / 调用树 / Hot Spots]
     SE[Selenium 4<br/>pytest 25 条] -->|UI 用例| S
     JU[JUnit 5] -->|50 并发抢票| S
     S --> T[Thymeleaf 页面]
@@ -210,6 +214,16 @@ H2 启动时自动建表并写入演示数据，退出即清空。**只适合看
 脚本包含 CSV 参数化、Cookie 复用、响应断言、命令行执行；详细命令见
 [perf/README.md](perf/README.md)。
 
+### JProfiler 采样
+
+JProfiler 16.3 通过本地 Attach 连到运行中的 JVM，CPU sampling 5 ms，
+对 **50 线程 × 300 圈登录+查询** 采样约 5 分钟：
+
+- 快照：`docs/profiler/login-5min.jps`
+- CPU 调用树：`docs/profiler/cpu-calltree.html`（`HTTP: /login` 占 92.1%）
+- Hot Spots：`docs/profiler/cpu-hotspots.csv`（`BCryptPasswordEncoder.matches` 91.2%）
+- GUI 连接四步与截图点：[docs/JMeter与JProfiler操作手册.md](docs/JMeter与JProfiler操作手册.md)
+
 ### JUnit 并发正确性
 
 `BookingConcurrencyTest`：余票 10 张，50 个并发请求，断言：
@@ -296,7 +310,7 @@ GUI 的 Attach 流程、采样时长和截图点见
 
 ### 结论与边界
 
-- 查询/混合的功能链路可用；登录是唯一不达标场景，瓶颈是 BCrypt（JFR 89.4% CPU）
+- 查询/混合的功能链路可用；登录是唯一不达标场景，瓶颈是 BCrypt（JProfiler 91.2% / JFR 89.4% CPU）
 - **1,485 只能叫“同机压测配置下的实测平台”，不能叫系统容量**
 - 单机、同压、小数据集、无思考时间；结果不外推到生产
 - 测试方案：[docs/性能测试方案.md](docs/性能测试方案.md) ·
@@ -307,8 +321,8 @@ GUI 的 Attach 流程、采样时长和截图点见
 | 亮点 | 证据 |
 |------|------|
 | 真实业务约束，不是 CRUD demo | 下单用 `UPDATE ... WHERE stock > 0` 原子扣减；JUnit 50 抢 10 不超卖 |
-| 测试链路完整 | 4 个 JMeter 场景 + 25 条 Selenium + 2 条 JUnit + 报告/图表 |
-| 每个数字可追溯 | JTL/CSV → 图表 → 报告；`perf/analyze_*.py` 可重算 |
+| 测试链路完整 | JMeter 4 个场景 + JProfiler CPU 采样 + 25 条 Selenium + 2 条 JUnit + 图表/证据 |
+| 每个数字可追溯 | JTL/CSV → 图表 → 报告；JProfiler 快照 → 调用树 → 热点 CSV；`perf/analyze_*.py` 可重算 |
 | 有实验精神 | 连接池 A/B 主动推翻“10 连接上限”的初始假设，并保留否定结论 |
 | AI 辅助 + 人工复核 | AI 生成/修改 JMX、分析、图表和报告初稿；所有数字回原始 JTL 复核 |
 | 可教学、可复现 | 中文文档、seed/reset SQL、H2 演示、脚本化命令 |
