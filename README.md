@@ -39,22 +39,7 @@
 
 ## 架构
 
-```mermaid
-flowchart LR
-    B[Browser] -->|HTTP| S[Spring Boot 3.4<br/>Tomcat 10.1]
-    S --> JPA[JPA / Hibernate]
-    JPA --> H[HikariCP]
-    H --> DB[(MySQL 8.4)]
-    JM[JMeter 5.6<br/>CLI -n] -->|login / search / order| S
-    JP[JProfiler 16.3<br/>CPU sampling 5 ms] -.->|采样| S
-    JP --> P[快照 / 调用树 / Hot Spots]
-    SE[Selenium 4<br/>pytest 25 条] -->|UI 用例| S
-    JU[JUnit 5] -->|50 并发抢票| S
-    S --> T[Thymeleaf 页面]
-    JM --> R[JTL / HTML]
-    R --> A[Python 分析]
-    A --> F[CSV / PNG / Markdown / DOCX]
-```
+![系统架构](docs/figs/architecture.jpg)
 
 一次性能测试的链路：
 
